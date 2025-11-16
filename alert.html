@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Enhanced General Styles: Modern, responsive, AWS-inspired */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #34495e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        h1 i {
+            color: #e74c3c;
+        }
+
+        /* Header with buttons: Clear, Export, Refresh */
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-clear {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-export {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-export:hover {
+            background-color: #229954;
+        }
+
+        .btn-refresh {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-refresh:hover {
+            background-color: #2980b9;
+        }
+
+        /* Search/Filter Input */
+        .search-filter {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter input,
+        .search-filter select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* Enhanced Alert Logs Styles: Cards with icons, responsive grid */
+        #alerts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+        }
+
+        .alert-log {
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .alert-log:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .alert-log.warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #f39c12;
+            color: #856404;
+        }
+
+        .alert-log.critical {
+            background-color: #f8d7da;
+            border-left: 4px solid #e74c3c;
+            color: #721c24;
+        }
+
+        .alert-log.stable {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .alert-log.changed {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert-log i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            float: right;
+        }
+
+        .alert-log .timestamp {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .alert-log p {
+            margin: 5px 0;
+        }
+
+        /* Default message when no alerts */
+        .no-alerts {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
+        }
+
+        .no-alerts i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+
+        /* Notification Box (for live alerts) */
+        .notification-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .notification-box.safe { background-color: #28a745; }
+        .notification-box.warning { background-color: #f39c12; }
+        .notification-box.critical { background-color: #e74c3c; }
+        .notification-box.changed { background-color: #17a2b8; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header-actions { justify-content: center; }
+            #alerts-container { grid-template-columns: 1fr; }
+            .search-filter { flex-direction: column; align-items: center; }
+            .notification-box { position: static; margin: 10px 0; right: auto; min-width: auto; }
+        }
+
+        /* Live indicator */
+        .live-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="live-indicator" id="live-indicator">
+        <i class="fas fa-circle"></i> Live
+    </div>
+
+    <div class="notification-box" id="notification-box"></div>
+
+    <div class="container">
+        <h1><i class="fas fa-bell"></i>Alert History</h1>
+        
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <button class="btn btn-clear" onclick="clearNotifications()">
+                <i class="fas fa-trash"></i> Clear All
+            </button>
+            <button class="btn btn-export" onclick="exportAlerts()">
+                <i class="fas fa-download"></i> Export JSON
+            </button>
+            <button class="btn btn-refresh" onclick="renderAlerts()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+
+        <!-- Search/Filter -->
+        <div class="search-filter">
+            <input type="text" id="search-input" placeholder="Search alerts (e.g., temperature > 30)" oninput="filterAlerts()">
+            <select id="type-filter" onchange="filterAlerts()">
+                <option value="">All Types</option>
+                <option value="warning">Warning</option>
+                <option value="critical">Critical</option>
+                <option value="stable">Stable</option>
+                <option value="changed">Changed</option>
+            </select>
+        </div>
+
+        <!-- Alerts Container -->
+        <div id="alerts-container"></div>
+    </div>
+
+    <!-- Socket.io for Real-Time -->
+    <script src="http://localhost:3001/socket.io/socket.io.js"></script>
+    <script src="temperature.js"></script> <!-- Integrated with stubs below -->
+
+    <script>
+        // Stub globals for temperature.js to prevent errors (no gauge/chart needed here)
+        let tempGauge = { refresh: function() { console.log('Gauge update (stubbed)'); } };
+        let tempChart = {
+            data: { labels: [], datasets: [{ data: [] }] },
+            update: function() { console.log('Chart update (stubbed)'); }
+        };
+        let temperatureData = [];
+        let totalTemperature = 0;
+        let readingCount = 0;
+        let minTemperature = Infinity;
+        let maxTemperature = -Infinity;
+        let startTime = Date.now();
+
+        // Enhanced: Socket.io for real-time updates
+        const socket = io();
+        socket.on('connect', () => {
+            document.getElementById('live-indicator').style.display = 'block';
+            console.log('Connected to server for live alerts');
+        });
+
+        socket.on('temperatureUpdate', (temperature) => {
+            // Simulate fetch logic for alert generation
+            const parsedTemp = parseFloat(temperature);
+            if (!isNaN(parsedTemp)) {
+                // Trigger notification logic (reuses temperature.js)
+                // Note: This assumes temperature.js globals are set; adjust as needed
+                fetchTemperature(); // This will handle stability and call showNotification
+            }
+        });
+
+        // Enhanced renderAlerts: Supports search/filter, more types
+        function renderAlerts(filteredAlerts = null) {
+            const alertsContainer = document.getElementById('alerts-container');
+            let alerts = filteredAlerts || JSON.parse(localStorage.getItem('alerts')) || [];
+
+            if (alerts.length === 0) {
+                alertsContainer.innerHTML = `
+                    <div class="no-alerts">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No alerts recorded yet. <br> <small>Monitor the dashboard to generate some!</small></p>
+                    </div>
+                `;
+                return;
+            }
+
+            alertsContainer.innerHTML = '';  // Clear previous
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.classList.add('alert-log', alert.type);
+                let iconClass = 'fas fa-info-circle';
+                switch (alert.type) {
+                    case 'warning': iconClass = 'fas fa-exclamation-triangle'; break;
+                    case 'critical': iconClass = 'fas fa-exclamation-circle'; break;
+                    case 'stable': iconClass = 'fas fa-check-circle'; break;
+                    case 'changed': iconClass = 'fas fa-sync-alt'; break;
+                }
+                alertDiv.innerHTML = `
+                    <p><strong>Temperature:</strong> ${alert.temperature}°C</p>
+                    <p><strong>Alert Type:</strong> ${alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}</p>
+                    <p><strong>Message:</strong> ${alert.message || 'Standard alert'}</p>
+                    <p class="timestamp"><strong>Timestamp:</strong> ${alert.timestamp}</p>
+                    <i class="${iconClass}"></i>
+                `;
+                alertsContainer.prepend(alertDiv);  // Newest first
+            });
+        }
+
+        // Filter function for search and type
+        function filterAlerts() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+            let alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+
+            let filtered = alerts.filter(alert => {
+                const matchesSearch = alert.temperature.toString().includes(searchTerm) ||
+                                      alert.type.toLowerCase().includes(searchTerm) ||
+                                      alert.message.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || alert.type === typeFilter;
+                return matchesSearch && matchesType;
+            });
+
+            renderAlerts(filtered);
+        }
+
+        // Enhanced clearNotifications: Confirms and clears
+        function clearNotifications() {
+            if (confirm('Clear all alerts? This cannot be undone.')) {
+                localStorage.removeItem('alerts');
+                renderAlerts();
+                showTempNotification('All alerts cleared!', 'info', 3000);  // Temp toast
+            }
+        }
+
+        // New: Export alerts to JSON (download)
+        function exportAlerts() {
+            const alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            const dataStr = JSON.stringify(alerts, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `alerts-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Enhanced showNotification: Saves to localStorage, supports more types
+        function showNotification(temperature, type, duration = '') {
+            const notificationBox = document.getElementById('notification-box');
+            let message = '';
+            switch (type) {
+                case 'stable':
+                    message = `Temperature stable at ${temperature}°C for ${duration} seconds.`;
+                    break;
+                case 'changed':
+                    message = `Temperature changed to ${temperature}°C!`;
+                    break;
+                case 'warning':
+                    message = `Warning: ${temperature}°C exceeds threshold!`;
+                    break;
+                case 'critical':
+                    message = `Critical: ${temperature}°C exceeds dangerous limit!`;
+                    break;
+                default:
+                    message = `Alert: ${temperature}°C (${type})`;
+            }
+
+            notificationBox.textContent = message;
+            notificationBox.className = `notification-box ${type}`;
+            notificationBox.style.display = 'block';
+
+            // Save to localStorage
+            let alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            alerts.unshift({
+                temperature: temperature,
+                type: type,
+                message: message,
+                timestamp: new Date().toLocaleString()
+            });
+            // Limit to 100 to prevent bloat
+            localStorage.setItem('alerts', JSON.stringify(alerts.slice(0, 100)));
+
+            // Re-render if filtered or new
+            renderAlerts();
+
+            // Auto-hide after 5s
+            setTimeout(() => { notificationBox.style.display = 'none'; }, 5000);
+        }
+
+        // Temp notification helper (for non-temp events like clear)
+        function showTempNotification(message, type = 'info', duration = 3000) {
+            const notificationBox = document.getElementById('notification-box');
+            notificationBox.textContent = message;
+            notificationBox.className = `notification-box ${type}`;
+            notificationBox.style.display = 'block';
+            setTimeout(() => { notificationBox.style.display = 'none'; }, duration);
+        }
+
+        // Auto-refresh alerts every 10s
+        setInterval(renderAlerts, 10000);
+
+        // Initial render
+        window.onload = () => {
+            renderAlerts();
+            // Start temperature monitoring (from temperature.js)
+            setInterval(fetchTemperature, 2000);  // Poll every 2s for alerts
+        };
+    </script>
+</body>
+</html>

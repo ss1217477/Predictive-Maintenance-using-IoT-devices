@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Maintenance IoT | AWS-Inspired Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amazon+Ember:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Amazon Ember', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.5;
+            color: #232f3e;
+            background-color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+      
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #232f3e;
+            color: #ffffff;
+            padding: 0.75rem 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        header.scrolled {
+            background-color: rgba(35, 47, 62, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff9900;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -0.25rem;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ff9900;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after,
+        nav a.active::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: #ff9900;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: #ffffff;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        .hero {
+            height: 70vh;
+            background: linear-gradient(135deg, rgba(35, 47, 62, 0.8), rgba(0, 0, 0, 0.6)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23232f3e" width="1200" height="600"/><path fill="%23ff9900" d="M0 300 Q300 0 600 300 T1200 300 V600 H0 Z"/></svg>');
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.shutterstock.com/image-vector/predictive-maintenance-icon-wrench-chart-260nw-2544483503.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background-color: #ff9900;
+            color: #232f3e;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(255, 153, 0, 0.3);
+        }
+
+        .cta-button:hover {
+            background-color: #e77a00;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 153, 0, 0.4);
+        }
+
+        /* Features Section: AWS card grid with icons and external links */
+        .features {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #232f3e;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #e7e9ec;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            display: block;
+            color: #ff9900;
+            font-size: 2rem;
+        }
+
+        .feature-card img.feature-icon {
+            filter: brightness(0) saturate(100%) invert(67%) sepia(52%) saturate(1000%) hue-rotate(0deg) brightness(103%) contrast(101%);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #232f3e;
+        }
+
+        .feature-card p {
+            color: #565e64;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-link {
+            background-color: #232f3e;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .feature-link:hover {
+            background-color: #3a4553;
+        }
+
+        /* About Section: AWS-like clean typography with sections */
+        #about {
+            padding: 6rem 2rem;
+            background-color: #f7f7f7;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        #about h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #232f3e;
+            font-family: 'Amazon Ember', sans-serif;
+        }
+
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .about-content h2 {
+            font-size: 1.75rem;
+            margin: 2rem 0 1rem;
+            color: #232f3e;
+        }
+
+        .about-content p,
+        .about-content li {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #565e64;
+            margin-bottom: 1rem;
+        }
+
+        .about-content ul, .about-content ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-content strong {
+            color: #232f3e;
+        }
+
+        .highlight-box {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 4px solid #ff9900;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .project-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .project-images img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .project-images img:hover {
+            transform: scale(1.02);
+        }
+
+        #contact {
+            padding: 6rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        #contact h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #232f3e;
+        }
+
+        #contact p {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #565e64;
+        }
+
+        .contact-form {
+            background: #f7f7f7;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #232f3e;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e7e9ec;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background-color: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff9900;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: #ff9900;
+            color: #232f3e;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #e77a00;
+            color: #ffffff;
+        }
+
+        .submit-btn:disabled {
+            background-color: #a9a9a9;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+        }
+
+        .contact-details {
+            background: #f7f7f7;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .contact-details h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #232f3e;
+        }
+
+        .contact-details p {
+            font-size: 1.1rem;
+            color: #565e64;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-details a {
+            color: #ff9900;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-details a:hover {
+            color: #e77a00;
+        }
+
+        footer {
+            background-color: #232f3e;
+            color: #ffffff;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive: Mobile-first */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: #232f3e;
+                padding: 1rem 0;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero {
+                padding: 0 1rem;
+                height: 60vh;
+            }
+
+            .features, #about, #contact {
+                padding: 3rem 1rem;
+            }
+
+            .project-images {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="#home" class="logo">Predictive Maintenance using IoT Devices2</a>
+            <nav>
+                <ul>
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="menu-toggle" id="menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero fade-in">
+        <h1>Transform Your Maintenance Strategy with Predictive Insights</h1>
+        <p>Leverage the power of IoT and predictive analytics to minimize downtime, cut costs, and maximize operational efficiency.</p>
+        <a href="#features" class="cta-button">Get Started</a>
+    </section>
+
+    <section id="features" class="features fade-in">
+        <h2>Key Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-tachometer-alt feature-icon"></i>
+                <h3>Real-time Monitoring</h3>
+                <p>24/7 tracking of equipment performance to prevent failures with IoT sensors.</p>
+                <a href="dashboard.html" class="feature-link">Check Performance <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bell feature-icon"></i>
+                <h3>Automated Alerts</h3>
+                <p>Instant notifications about equipment health for proactive maintenance.</p>
+                <a href="alert.html" class="feature-link">Check History <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="fade-in">
+        <h1>About the Project</h1>
+        <div class="about-content">
+            <h2>Project Overview</h2>
+            <p>The <strong>Predictive Maintenance IoT</strong> project is designed to help industries optimize their maintenance strategies by using real-time data collected from IoT sensors. The goal is to predict potential equipment failures before they occur, minimizing downtime and reducing maintenance costs. This solution is particularly valuable for sectors such as manufacturing, energy, and transportation.</p>
+            
+
+            <h2>Problem Statement</h2>
+            <p>Many industries still rely on traditional maintenance schedules or reactive maintenance, where equipment is repaired only after it fails. This approach can result in unplanned downtime, costly repairs, and reduced operational efficiency.</p>
+
+            <h2>Solution</h2>
+            <p>This project provides a solution through predictive maintenance. By leveraging Internet of Things (IoT) sensors, real-time monitoring, and artificial intelligence (AI), we can gather data on the health and performance of equipment.</p>
+
+            <div class="highlight-box">
+                <h2>Key Technologies Used</h2>
+                <ul>
+                    <li><strong>IoT Sensors:</strong> Collect real-time data including temperature, vibration, pressure.</li>
+                    <li><strong>Data Analytics & Machine Learning:</strong> Analyze data to detect anomalies and predict failures.</li>
+                    <li><strong>Cloud Computing:</strong> Scalable storage and processing.</li>
+                    <li><strong>Predictive Analytics:</strong> Actionable insights for timely maintenance.</li>
+                </ul>
+            </div>
+
+           
+
+            <h2>How It Works</h2>
+            <ol>
+                <li><strong>Data Collection:</strong> IoT sensors installed on equipment.</li>
+                <li><strong>Data Transmission:</strong> Secure transmission to the cloud.</li>
+                <li><strong>Data Analysis:</strong> ML algorithms identify patterns.</li>
+                <li><strong>Prediction & Alerts:</strong> Automated notifications for action.</li>
+                <li><strong>Maintenance:</strong> Proactive interventions to minimize issues.</li>
+            </ol>
+
+            <div class="highlight-box">
+                <h2>Benefits</h2>
+                <ul>
+                    <li><strong>Reduced Downtime:</strong> Predict failures early.</li>
+                    <li><strong>Cost Savings:</strong> Condition-based maintenance.</li>
+                    <li><strong>Increased Equipment Lifespan:</strong> Timely interventions.</li>
+                    <li><strong>Improved Efficiency:</strong> Optimized resource allocation.</li>
+                    <li><strong>Data-Driven Decisions:</strong> Informed business strategies.</li>
+                </ul>
+            </div>
+
+            <h2>Project Applications</h2>
+            <ul>
+                <li><strong>Manufacturing:</strong> Monitor production lines.</li>
+                <li><strong>Energy:</strong> Ensure reliable operations in power plants.</li>
+                <li><strong>Transportation:</strong> Enhance vehicle and fleet safety.</li>
+                <li><strong>Oil and Gas:</strong> Prevent infrastructure failures.</li>
+            </ul>
+
+           
+
+            <h2>Future Scope</h2>
+            <ul>
+                <li>Integration with AR for guided maintenance.</li>
+                <li>Advanced ML for higher accuracy.</li>
+                <li>Expansion to additional industries.</li>
+                <li>Mobile app for real-time access.</li>
+            </ul>
+        </div>
+    </section>
+
+    <script>
+        // Navigation and Scroll Effects
+        const navLinks = document.querySelectorAll('nav a');
+        const sections = document.querySelectorAll('section');
+        const header = document.querySelector('header');
+        const menuToggle = document.getElementById('menu-toggle');
+        const navUl = document.querySelector('nav ul');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(link.getAttribute('href'));
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        menuToggle.addEventListener('click', () => {
+            navUl.classList.toggle('active');
+        });
+
+        // Fade-in on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Form Handling
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.querySelector('.submit-btn');
+        const successMsg = document.getElementById('success-message');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            setTimeout(() => {
+                successMsg.style.display = 'block';
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+                setTimeout(() => successMsg.style.display = 'none', 5000);
+            }, 1500);
+        });
+
+        const inputs = form.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                input.style.borderColor = input.checkValidity() ? '#e7e9ec' : '#ff9900';
+            });
+        });
+    </script>
+</body>
+
+</html>
