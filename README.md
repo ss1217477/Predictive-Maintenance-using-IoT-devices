@@ -3,7 +3,7 @@
 Real-time temperature monitoring for equipment health using Arduino, Python, Node.js, and a responsive web UI. Detects anomalies, sends alerts, and visualizes trends.
 
 ## Quick Demo
-![Dashboard Screenshot](<
+![Dashboard Screenshot](https://github.com/ss1217477/Predictive-Maintenance-using-IoT-devices/blob/a4a844c15e75076237b3e0736f56e1bdc81c988d/Screenshot%202024-12-24%20110134.png
 ) <!-- Add a screenshot later -->
 
 ## Features
