@@ -3,7 +3,8 @@
 Real-time temperature monitoring for equipment health using Arduino, Python, Node.js, and a responsive web UI. Detects anomalies, sends alerts, and visualizes trends.
 
 ## Quick Demo
-![Dashboard Screenshot](screenshots/dashboard.png) <!-- Add a screenshot later -->
+![Dashboard Screenshot](<img width="1877" height="918" alt="Screenshot 2024-12-24 110134" src="https://github.com/user-attachments/assets/31b5859a-51d2-4a7f-8725-ad77784b0e61" />
+) <!-- Add a screenshot later -->
 
 ## Features
 - Live gauge & charts (JustGage, Chart.js).
