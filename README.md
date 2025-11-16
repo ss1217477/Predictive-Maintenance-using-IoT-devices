@@ -21,7 +21,7 @@ Real-time temperature monitoring for equipment health using Arduino, Python, Nod
 | Frontend | HTML/JS/CSS |
 
 ## Setup
-1. **Arduino**: Upload `arduino.cpp` (115200 baud).
+1. **Arduino**: Upload `arduino.ino` (115200 baud).
 2. **Python**: `pip install -r requirements.txt` → `python scrapping.py`.
 3. **Server**: `npm install` → `node server.js`.
 4. **UI**: Open `dashboard.html` or serve via Express.
