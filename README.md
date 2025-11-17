@@ -9,10 +9,10 @@ Real-time temperature monitoring system using Arduino + NTC Thermistor.
 ## Hardware Connection
 
 ### Circuit Diagram
-![Circuit Diagram]([screenshots/circuit-diagram.png](https://www.electronicwings.com/storage/PlatformSection/TopicContent/208/description/Thermistor_Interfacing_Diagram.png))
+![Circuit Diagram](https://www.electronicwings.com/storage/PlatformSection/TopicContent/208/description/Thermistor_Interfacing_Diagram.png)
 
 ### Actual Setup (Breadboard)
-![Real Setup]([screenshots/real-setup.jpg](https://www.electronicwings.com/storage/PlatformSection/TopicContent/208/description/Content%20Image%20NTC%20.jpg))
+![Real Setup](https://www.electronicwings.com/storage/PlatformSection/TopicContent/208/description/Content%20Image%20NTC%20.jpg)
 
 > **Components Used**:
 > - Arduino Uno
