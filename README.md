@@ -2,6 +2,31 @@
 
 Real-time temperature monitoring for equipment health using Arduino, Python, Node.js, and a responsive web UI. Detects anomalies, sends alerts, and visualizes trends.
 
+# Predictive Maintenance IoT Dashboard
+
+Real-time temperature monitoring system using Arduino + NTC Thermistor.
+
+## Hardware Connection
+
+### Circuit Diagram
+![Circuit Diagram]([screenshots/circuit-diagram.png](https://www.electronicwings.com/storage/PlatformSection/TopicContent/208/description/Thermistor_Interfacing_Diagram.png))
+
+### Actual Setup (Breadboard)
+![Real Setup]([screenshots/real-setup.jpg](https://www.electronicwings.com/storage/PlatformSection/TopicContent/208/description/Content%20Image%20NTC%20.jpg))
+
+> **Components Used**:
+> - Arduino Uno
+> - 10K NTC Thermistor
+> - 10K Resistor (R2) → Voltage divider
+> - Jumper wires
+> - Breadboard
+
+**Connections**:
+- One leg of thermistor → 5V (red wire)
+- Other leg → A0 and also to 10K resistor (R2)
+- Other end of 10K resistor → GND (blue/black wire)
+- A0 reads the voltage in the middle of the voltage divider
+
 ## Quick Demo
 ![Dashboard Screenshot](https://github.com/ss1217477/Predictive-Maintenance-using-IoT-devices/blob/a4a844c15e75076237b3e0736f56e1bdc81c988d/Screenshot%202024-12-24%20110134.png
 ) <!-- Add a screenshot later -->
